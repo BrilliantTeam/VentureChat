@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import mineverse.Aust1n46.chat.utilities.ScheduleUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -116,7 +117,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 		PlayerData.loadLegacyPlayerData();
 		PlayerData.loadPlayerData();
 		
-		Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+		ScheduleUtil.runTaskAsynchronously(this, () -> {
 			Database.initializeMySQL();
 		});
 
@@ -163,8 +164,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	}
 	
 	private void startRepeatingTasks() {
-		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
+		ScheduleUtil.runTaskTimerAsynchronously(this, new Runnable() {
 			@Override
 			public void run() {
 				PlayerData.savePlayerData();
@@ -173,8 +173,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				}
 			}
 		}, 0L, getConfig().getInt("saveinterval") * 1200); //one minute * save interval
-		
-		scheduler.runTaskTimerAsynchronously(this, new Runnable() {
+
+		ScheduleUtil.runTaskTimerAsynchronously(this, new Runnable() {
 			@Override
 			public void run() {
 				for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
@@ -270,15 +270,12 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				// System.out.println(mcp.getPlayer().getServer().getServerName());
 				// out.writeUTF(mcp.getPlayer().getServer().getServerName());
 				out.writeUTF(mcp.getUUID().toString());
-				Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(getInstance(), new Runnable() {
-					@Override
-					public void run() {
-						if(!mcp.isOnline() || mcp.hasPlayed()) {
-							return;
-						}
-						synchronize(mcp, false);
+				ScheduleUtil.runTaskLater(getInstance(), () -> {
+					if(!mcp.isOnline() || mcp.hasPlayed()) {
+						return;
 					}
-				}, 20L); // one second delay before running again
+					synchronize(mcp, false);
+				},20L); // one second delay before running again
 			}
 			else {
 				out.writeUTF("Update");
@@ -403,7 +400,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					}
 				}
 				
-				Bukkit.getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
+				ScheduleUtil.runTaskAsynchronously(this, new Runnable() {
 					@Override
 					public void run() {
 						//Create VentureChatEvent

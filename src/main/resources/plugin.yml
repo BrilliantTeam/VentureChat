@@ -1,6 +1,7 @@
 name: VentureChat
 version: ${project.version}
 api-version: 1.13
+folia-supported: true
 main: mineverse.Aust1n46.chat.MineverseChat
 depend: [Vault, ProtocolLib, PlaceholderAPI]
 softdepend: [Towny, Factions, EssentialsDiscord]

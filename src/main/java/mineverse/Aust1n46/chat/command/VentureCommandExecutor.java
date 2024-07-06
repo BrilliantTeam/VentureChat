@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import mineverse.Aust1n46.chat.utilities.ScheduleUtil;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
@@ -166,7 +167,7 @@ public class VentureCommandExecutor {
 		}
 		// Forcibly re-register enabled VentureChat commands on a delay to ensure they
 		// have priority
-		server.getScheduler().runTaskLater(plugin, () -> {
+		ScheduleUtil.runTaskLater(plugin, () -> {
 			for (final Entry<String, Command> commandEntry : commands.entrySet()) {
 				registerCommand(commandEntry.getKey(), commandEntry.getValue());
 			}

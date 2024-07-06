@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.Set;
 
+import mineverse.Aust1n46.chat.utilities.ScheduleUtil;
 import net.essentialsx.api.v2.services.discord.DiscordService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -47,7 +48,7 @@ public class ChatListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
 		event.setCancelled(true);
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+		ScheduleUtil.runTaskAsynchronously(plugin, new Runnable() {
 			@Override
 			public void run() {
 				handleTrueAsyncPlayerChatEvent(event);

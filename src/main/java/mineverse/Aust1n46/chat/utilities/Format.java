@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -90,9 +90,6 @@ public class Format {
      *
      * @param s
      * @param format
-     * @param prefix
-     * @param nickname
-     * @param suffix
      * @param icp
      * @return {@link String}
      */

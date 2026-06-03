@@ -449,7 +449,7 @@ public class Format {
 	}
 
 	public static String formatModerationGUI(String json, Player player, String sender, String channelName, int hash) {
-		if (player.hasPermission("venturechat.gui")) {
+		if (player != null && player.hasPermission("venturechat.gui")) {
 			json = json.substring(0, json.length() - 1);
 			json += "," + Format.convertToJsonColors(Format.FormatStringAll(getInstance().getConfig().getString("guiicon")),
 					",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/vchatgui " + sender + " " + channelName

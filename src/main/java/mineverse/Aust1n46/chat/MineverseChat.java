@@ -336,7 +336,10 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	
 	public static void sendPluginMessage(ByteArrayOutputStream byteOutStream) {
 		if(MineverseChatAPI.getOnlineMineverseChatPlayers().size() > 0) {
-			MineverseChatAPI.getOnlineMineverseChatPlayers().iterator().next().getPlayer().sendPluginMessage(getInstance(), PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
+			Player pluginMsgPlayer = MineverseChatAPI.getOnlineMineverseChatPlayers().iterator().next().getPlayer();
+			if(pluginMsgPlayer != null) {
+				pluginMsgPlayer.sendPluginMessage(getInstance(), PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
+			}
 		}
 	}
 	
@@ -396,7 +399,8 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				Set<Player> recipients = new HashSet<Player>();
 				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 					if(p.isListening(chatChannelObject.getName())) {
-						recipients.add(p.getPlayer());
+						Player pp = p.getPlayer();
+						if(pp != null) recipients.add(pp);
 					}
 				}
 				
@@ -418,21 +422,23 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				
 				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 					if(p.isListening(chatChannelObject.getName())) {
+						Player pp = p.getPlayer();
+						if(pp == null) continue;
 						if(!p.getBungeeToggle() && MineverseChatAPI.getOnlineMineverseChatPlayer(senderName) == null) {
 							continue;
 						}
 						
-						String json = Format.formatModerationGUI(globalJSON, p.getPlayer(), senderName, chatchannel, hash);
+						String json = Format.formatModerationGUI(globalJSON, pp, senderName, chatchannel, hash);
 						PacketContainer packet = Format.createPacketPlayOutChat(json);
 						
 						if(getConfig().getBoolean("ignorechat", false)) {
 							if(!p.getIgnores().contains(senderUUID)) {
 								// System.out.println("Chat sent");
-								Format.sendPacketPlayOutChat(p.getPlayer(), packet);							
+								Format.sendPacketPlayOutChat(pp, packet);							
 							}
 							continue;
 						}
-						Format.sendPacketPlayOutChat(p.getPlayer(), packet);	
+						Format.sendPacketPlayOutChat(pp, packet);	
 					}
 				}
 			}
@@ -452,9 +458,11 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				
 				for(MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 					if(p.isListening(chatChannelObj.getName())) {
-						String finalJSON = Format.formatModerationGUI(json, p.getPlayer(), "Discord", chatChannelObj.getName(), hash);
+						Player pp = p.getPlayer();
+						if(pp == null) continue;
+						String finalJSON = Format.formatModerationGUI(json, pp, "Discord", chatChannelObj.getName(), hash);
 						PacketContainer packet = Format.createPacketPlayOutChat(finalJSON);
-						Format.sendPacketPlayOutChat(p.getPlayer(), packet);
+						Format.sendPacketPlayOutChat(pp, packet);
 					}
 				}	
 			}

@@ -11,7 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -23,6 +22,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
+import mineverse.Aust1n46.chat.utilities.ScheduleUtil;
 
 public class Removemessage extends Command {
 	private MineverseChat plugin = MineverseChat.getInstance();
@@ -63,10 +63,11 @@ public class Removemessage extends Command {
 			}
 			return true;
 		} else {
-			new BukkitRunnable() {
-				public void run() {
+			ScheduleUtil.runTaskAsynchronously(plugin, () -> {
 					final Map<Player, List<PacketContainer>> packets = new HashMap();
 					for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
+						Player player = p.getPlayer();
+						if (player == null) continue;
 						List<ChatMessage> messages = p.getMessages();
 						List<PacketContainer> playerPackets = new ArrayList();
 						boolean resend = false;
@@ -75,7 +76,7 @@ public class Removemessage extends Command {
 						}
 						for (ChatMessage message : messages) {
 							if (message.getHash() == hash) {
-								WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass")
+								WrappedChatComponent removedComponent = player.hasPermission("venturechat.message.bypass")
 										? Removemessage.this.getMessageDeletedChatComponentAdmin(message)
 										: Removemessage.this.getMessageDeletedChatComponentPlayer();
 								message.setComponent(removedComponent);
@@ -88,7 +89,7 @@ public class Removemessage extends Command {
 								String submessage = message.getMessage().substring(0,
 										message.getMessage().length() - ChatColor.stripColor(Format.FormatStringAll(plugin.getConfig().getString("guiicon"))).length());
 								if (submessage.hashCode() == hash) {
-									WrappedChatComponent removedComponent = p.getPlayer().hasPermission("venturechat.message.bypass")
+									WrappedChatComponent removedComponent = player.hasPermission("venturechat.message.bypass")
 											? Removemessage.this.getMessageDeletedChatComponentAdmin(message)
 											: Removemessage.this.getMessageDeletedChatComponentPlayer();
 									message.setComponent(removedComponent);
@@ -102,21 +103,18 @@ public class Removemessage extends Command {
 
 						}
 						if (resend) {
-							packets.put(p.getPlayer(), playerPackets);
+							packets.put(player, playerPackets);
 						}
 					}
-					new BukkitRunnable() {
-						public void run() {
-							for (Player p : packets.keySet()) {
-								List<PacketContainer> pPackets = packets.get(p);
-								for (PacketContainer c : pPackets) {
-									Format.sendPacketPlayOutChat(p, c);
-								}
+					ScheduleUtil.runTask(plugin, () -> {
+						for (Player p : packets.keySet()) {
+							List<PacketContainer> pPackets = packets.get(p);
+							for (PacketContainer c : pPackets) {
+								Format.sendPacketPlayOutChat(p, c);
 							}
 						}
-					}.runTask(plugin);
-				}
-			}.runTaskAsynchronously(plugin);
+					});
+			});
 			return true;
 		}
 	}

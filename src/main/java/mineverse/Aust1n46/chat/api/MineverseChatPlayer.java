@@ -228,7 +228,8 @@ public class MineverseChatPlayer {
 			if(ChatChannel.isChannel(channel)) {
 				ChatChannel chatChannel = ChatChannel.getChannel(channel);
 				if(chatChannel.hasPermission()) {
-					if(!this.getPlayer().hasPermission(chatChannel.getPermission())) {
+					Player isListeningPlayer = this.getPlayer();
+					if(isListeningPlayer != null && !isListeningPlayer.hasPermission(chatChannel.getPermission())) {
 						if(this.getCurrentChannel().equals(chatChannel)) {
 							this.setCurrentChannel(ChatChannel.getDefaultChannel());
 						}

@@ -23,6 +23,14 @@ public class ScheduleUtil {
         }
     }
 
+    public static void runEntityTask(Plugin plugin, Player player, Runnable task) {
+        if (isFolia) {
+            player.getScheduler().run(plugin, (ignored) -> task.run(), null);
+        } else {
+            Bukkit.getScheduler().runTask(plugin, task);
+        }
+    }
+
     public static void runTaskLater(Plugin plugin, Runnable task, long delay) {
         if (isFolia) {
             Bukkit.getGlobalRegionScheduler().runDelayed(plugin, (ignored) -> task.run(), delay);

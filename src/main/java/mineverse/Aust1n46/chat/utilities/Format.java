@@ -509,11 +509,13 @@ public class Format {
 	}
 
 	public static void sendPacketPlayOutChat(Player player, PacketContainer packet) {
-		try {
-			ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		ScheduleUtil.runEntityTask(getInstance(), player, () -> {
+			try {
+				ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 	
 	@SuppressWarnings("unchecked")

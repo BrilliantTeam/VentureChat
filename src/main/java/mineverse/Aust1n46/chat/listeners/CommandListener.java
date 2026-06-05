@@ -40,6 +40,7 @@ public class CommandListener implements Listener {
 		ConfigurationSection cs = plugin.getConfig().getConfigurationSection("commandspy");
 		Boolean wec = cs.getBoolean("worldeditcommands", true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
+		if (mcp == null) return;
 		if (!mcp.getPlayer().hasPermission("venturechat.commandspy.override")) {
 			for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 				if (p.hasCommandSpy()) {

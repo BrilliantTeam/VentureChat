@@ -47,6 +47,7 @@ public class Channel extends Command implements Listener {
 			return;
 		ChatChannel channel = event.getChannel();
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
+		if (mcp == null) return;
 		if (channel.hasPermission()) {
 			if (!mcp.getPlayer().hasPermission(channel.getPermission())) {
 				mcp.removeListening(channel.getName());

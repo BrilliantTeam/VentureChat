@@ -17,6 +17,7 @@ public class SignListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onSignChange(SignChangeEvent event) {
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
+		if (mcp == null) return;
 		for(int a = 0; a < event.getLines().length; a++) {
 			String line = event.getLine(a);
 			if(mcp.getPlayer().hasPermission("venturechat.color.legacy")) {

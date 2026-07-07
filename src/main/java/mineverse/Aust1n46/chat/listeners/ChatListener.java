@@ -63,6 +63,7 @@ public class ChatListener implements Listener {
 		Set<Player> recipients = event.getRecipients();
 		int recipientCount = recipients.size(); // Don't count vanished players
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(event.getPlayer());
+		if (mcp == null) return;
 		ChatChannel eventChannel = mcp.getCurrentChannel();
 		
 		if(mcp.isEditing()) {

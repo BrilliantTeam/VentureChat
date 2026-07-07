@@ -145,6 +145,7 @@ public class CommandListener implements Listener {
 		}
 		e.setCancelled(true);
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) e.getWhoClicked());
+		if (mcp == null) return;
 		String playerName = e.getView().getTitle().replace(" GUI", "").replace("VentureChat: ", "");
 		MineverseChatPlayer target = MineverseChatAPI.getMineverseChatPlayer(playerName);
 		ItemStack skull = e.getInventory().getItem(0);

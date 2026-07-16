@@ -34,7 +34,6 @@ public class MineverseChatPlayer {
 	private boolean filter;
 	private boolean notifications;
 	private boolean online;
-	private Player player;
 	private boolean hasPlayed;
 	private UUID conversation;
 	private boolean spy;
@@ -72,7 +71,6 @@ public class MineverseChatPlayer {
 		this.filter = filter;
 		this.notifications = notifications;
 		this.online = false;
-		this.player = null;
 		this.hasPlayed = false;
 		this.conversation = null;
 		this.spy = spy;
@@ -105,7 +103,6 @@ public class MineverseChatPlayer {
 		this.filter = true;
 		this.notifications = true;
 		this.online = false;
-		this.player = null;
 		this.hasPlayed = false;
 		this.conversation = null;
 		this.spy = false;
@@ -126,7 +123,8 @@ public class MineverseChatPlayer {
 	
 	@Deprecated
 	public String getNickname() {
-		return this.online ? this.player.getDisplayName() : "";
+		Player player = getPlayer();
+		return player != null ? player.getDisplayName() : "";
 	}
 
 	@Deprecated
@@ -360,16 +358,10 @@ public class MineverseChatPlayer {
 
 	public void setOnline(boolean online) {
 		this.online = online;
-		if(this.online) {
-			this.player = Bukkit.getPlayer(name);
-		}
-		else {
-			this.player = null;
-		}
 	}
 
 	public Player getPlayer() {
-		return this.online ? this.player : null;
+		return this.online ? Bukkit.getPlayer(this.uuid) : null;
 	}
 
 	public boolean hasPlayed() {

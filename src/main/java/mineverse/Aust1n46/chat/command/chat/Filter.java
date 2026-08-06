@@ -21,6 +21,7 @@ public class Filter extends Command {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+		if (mcp == null) return true;
 		if (mcp.getPlayer().hasPermission("venturechat.ignorefilter")) {
 			if (!mcp.hasFilter()) {
 				mcp.setFilter(true);

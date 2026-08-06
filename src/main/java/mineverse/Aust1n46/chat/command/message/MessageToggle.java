@@ -22,6 +22,7 @@ public class MessageToggle extends Command {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+		if (mcp == null) return true;
 		if (mcp.getPlayer().hasPermission("venturechat.messagetoggle")) {
 			if (!mcp.getMessageToggle()) {
 				mcp.setMessageToggle(true);

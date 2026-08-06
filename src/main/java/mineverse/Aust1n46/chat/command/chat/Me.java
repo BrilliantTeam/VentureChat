@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import mineverse.Aust1n46.chat.api.MineverseChatAPI;
+import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
 import mineverse.Aust1n46.chat.utilities.Format;
 
@@ -21,8 +22,11 @@ public class Me extends Command {
 				for (int x = 0; x < args.length; x++)
 					if (args[x].length() > 0)
 						msg += " " + args[x];
-				if (sender instanceof Player && MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender).hasFilter()) {
-					msg = Format.FilterChat(msg);
+				if (sender instanceof Player) {
+					MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+					if (mcp != null && mcp.hasFilter()) {
+						msg = Format.FilterChat(msg);
+					}
 				}
 				if (sender.hasPermission("venturechat.color.legacy")) {
 					msg = Format.FormatStringLegacyColor(msg);

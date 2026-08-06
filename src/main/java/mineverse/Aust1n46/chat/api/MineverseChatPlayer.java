@@ -152,11 +152,10 @@ public class MineverseChatPlayer {
 	}
 	
 	public boolean getRangedSpy() {
-		if(isOnline()) {
-			if(!getPlayer().hasPermission("venturechat.rangedspy")) {
-				setRangedSpy(false);
-				return false;
-			}
+		Player player = getPlayer();
+		if(player != null && !player.hasPermission("venturechat.rangedspy")) {
+			setRangedSpy(false);
+			return false;
 		}
 		return this.rangedSpy;
 	}
@@ -385,11 +384,10 @@ public class MineverseChatPlayer {
 	}
 
 	public boolean isSpy() {
-		if(this.isOnline()) {
-			if(!this.getPlayer().hasPermission("venturechat.spy")) {
-				this.setSpy(false);
-				return false;
-			}
+		Player player = getPlayer();
+		if(player != null && !player.hasPermission("venturechat.spy")) {
+			this.setSpy(false);
+			return false;
 		}
 		return this.spy;
 	}
@@ -399,11 +397,10 @@ public class MineverseChatPlayer {
 	}
 
 	public boolean hasCommandSpy() {
-		if(this.isOnline()) {
-			if(!this.getPlayer().hasPermission("venturechat.commandspy")) {
-				this.setCommandSpy(false);
-				return false;
-			}
+		Player player = getPlayer();
+		if(player != null && !player.hasPermission("venturechat.commandspy")) {
+			this.setCommandSpy(false);
+			return false;
 		}
 		return this.commandSpy;
 	}

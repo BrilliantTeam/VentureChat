@@ -43,7 +43,7 @@ public class CommandListener implements Listener {
 		if (mcp == null) return;
 		if (!mcp.getPlayer().hasPermission("venturechat.commandspy.override")) {
 			for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-				if (p.hasCommandSpy()) {
+				if (p.hasCommandSpy() && p.getPlayer() != null) {
 					if (wec) {
 						p.getPlayer().sendMessage(Format.FormatStringAll(cs.getString("format").replace("{player}", mcp.getName()).replace("{command}", event.getMessage())));
 					} else {

@@ -39,6 +39,7 @@ public class Chwho extends Command {
 					if (channel.hasPermission()) {
 						if (!sender.hasPermission(channel.getPermission())) {
 							MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer(((Player) sender));
+							if (mcp == null) return true;
 							mcp.removeListening(channel.getName());
 							mcp.getPlayer().sendMessage(LocalizedMessage.CHANNEL_NO_PERMISSION_VIEW.toString());
 							return true;
@@ -47,6 +48,7 @@ public class Chwho extends Command {
 
 					if (channel.getBungee() && sender instanceof Player) {
 						MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+						if (mcp == null) return true;
 						ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 						DataOutputStream out = new DataOutputStream(byteOutStream);
 						try {
@@ -65,7 +67,7 @@ public class Chwho extends Command {
 					PluginManager pluginManager = plugin.getServer().getPluginManager();
 					long linecount = LINE_LENGTH;
 					for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-						if (p.getListening().contains(channel.getName())) {
+						if (p.getPlayer() != null && p.getListening().contains(channel.getName())) {
 							if (sender instanceof Player) {
 								if (!((Player) sender).canSee(p.getPlayer())) {
 									continue;

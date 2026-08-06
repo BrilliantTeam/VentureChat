@@ -24,6 +24,7 @@ public class ChannelAlias extends Command {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+		if (mcp == null) return true;
 		for (ChatChannel channel : ChatChannel.getChatChannels()) {
 			if (commandLabel.toLowerCase().equals(channel.getAlias())) {
 				if (args.length == 0) {
@@ -31,7 +32,7 @@ public class ChannelAlias extends Command {
 							.sendMessage(LocalizedMessage.SET_CHANNEL.toString().replace("{channel_color}", channel.getColor() + "").replace("{channel_name}", channel.getName()));
 					if (mcp.hasConversation()) {
 						for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-							if (p.isSpy()) {
+							if (p.isSpy() && p.getPlayer() != null) {
 								p.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", mcp.getName())
 										.replace("{player_receiver}", MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName()));
 							}

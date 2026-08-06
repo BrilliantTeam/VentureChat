@@ -26,6 +26,7 @@ public class Party extends Command {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+		if (mcp == null) return true;
 		if (!mcp.getPlayer().hasPermission("venturechat.party")) {
 			mcp.getPlayer().sendMessage(ChatColor.RED + "You do not have permission for this command!");
 			return true;
@@ -211,7 +212,7 @@ public class Party extends Command {
 					String tellChat = MineverseChatAPI.getMineverseChatPlayer(mcp.getConversation()).getName();
 					mcp.setConversation(null);
 					for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-						if (p.isSpy()) {
+						if (p.isSpy() && p.getPlayer() != null) {
 							p.getPlayer().sendMessage(mcp.getName() + " is no longer in a private conversation with " + tellChat + ".");
 						}
 					}
@@ -299,7 +300,7 @@ public class Party extends Command {
 									.replace("{host}", MineverseChatAPI.getMineverseChatPlayer(mcp.getParty()).getName()).replace("{player}", mcp.getName())) + msg;
 						}
 						for (MineverseChatPlayer p : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
-							if ((p.getParty().equals(mcp.getParty()) || p.isSpy())) {
+							if (p.getPlayer() != null && (p.getParty().equals(mcp.getParty()) || p.isSpy())) {
 								p.getPlayer().sendMessage(partyformat);
 							}
 						}

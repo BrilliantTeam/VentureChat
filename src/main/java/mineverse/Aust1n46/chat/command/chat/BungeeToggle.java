@@ -22,6 +22,7 @@ public class BungeeToggle extends Command {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+		if (mcp == null) return true;
 		if (mcp.getPlayer().hasPermission("venturechat.bungeetoggle")) {
 			if (!mcp.getBungeeToggle()) {
 				mcp.setBungeeToggle(true);

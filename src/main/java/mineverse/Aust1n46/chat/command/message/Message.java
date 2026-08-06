@@ -33,6 +33,7 @@ public class Message extends Command {
 		}
 
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+		if (mcp == null) return true;
 		if (args.length == 0) {
 			mcp.getPlayer().sendMessage(LocalizedMessage.COMMAND_INVALID_ARGUMENTS.toString().replace("{command}", "/" + command).replace("{args}", "[player] [message]"));
 			return true;
@@ -103,7 +104,7 @@ public class Message extends Command {
 						if (sp.getName().equals(mcp.getName()) || sp.getName().equals(player.getName())) {
 							continue;
 						}
-						if (sp.isSpy()) {
+						if (sp.isSpy() && sp.getPlayer() != null) {
 							sp.getPlayer().sendMessage(spy);
 						}
 					}
@@ -119,7 +120,7 @@ public class Message extends Command {
 							if (sp.getName().equals(mcp.getName())) {
 								continue;
 							}
-							if (sp.isSpy()) {
+							if (sp.isSpy() && sp.getPlayer() != null) {
 								sp.getPlayer().sendMessage(LocalizedMessage.ENTER_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", mcp.getName())
 										.replace("{player_receiver}", player.getName()));
 							}
@@ -133,7 +134,7 @@ public class Message extends Command {
 							if (sp.getName().equals(mcp.getName())) {
 								continue;
 							}
-							if (sp.isSpy()) {
+							if (sp.isSpy() && sp.getPlayer() != null) {
 								sp.getPlayer().sendMessage(LocalizedMessage.EXIT_PRIVATE_CONVERSATION_SPY.toString().replace("{player_sender}", mcp.getName())
 										.replace("{player_receiver}", player.getName()));
 							}

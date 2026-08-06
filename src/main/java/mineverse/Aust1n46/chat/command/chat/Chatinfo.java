@@ -25,6 +25,7 @@ public class Chatinfo extends Command {
 					return true;
 				}
 				MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+				if (mcp == null) return true;
 				String listen = "";
 				String mute = "";
 				String blockedcommands = "";

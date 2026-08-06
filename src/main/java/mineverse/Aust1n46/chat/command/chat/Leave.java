@@ -24,6 +24,7 @@ public class Leave extends Command {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+		if (mcp == null) return true;
 		if (args.length > 0) {
 			ChatChannel channel = ChatChannel.getChannel(args[0]);
 			if (channel == null) {

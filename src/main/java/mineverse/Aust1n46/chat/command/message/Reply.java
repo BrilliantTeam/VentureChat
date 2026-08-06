@@ -28,6 +28,7 @@ public class Reply extends Command {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+		if (mcp == null) return true;
 		if (args.length > 0) {
 			if (mcp.hasReplyPlayer()) {
 				if (plugin.getConfig().getBoolean("bungeecordmessaging", true)) {
@@ -86,7 +87,7 @@ public class Reply extends Command {
 							if (p.getName().equals(mcp.getName()) || p.getName().equals(player.getName())) {
 								continue;
 							}
-							if (p.isSpy()) {
+							if (p.isSpy() && p.getPlayer() != null) {
 								p.getPlayer().sendMessage(spy);
 							}
 						}

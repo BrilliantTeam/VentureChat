@@ -27,6 +27,7 @@ public class Channel extends Command implements Listener {
 			return true;
 		}
 		MineverseChatPlayer mcp = MineverseChatAPI.getOnlineMineverseChatPlayer((Player) sender);
+		if (mcp == null) return true;
 		if (args.length > 0) {
 			if (!ChatChannel.isChannel(args[0])) {
 				mcp.getPlayer().sendMessage(LocalizedMessage.INVALID_CHANNEL.toString().replace("{args}", args[0]));

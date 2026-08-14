@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import mineverse.Aust1n46.chat.utilities.ScheduleUtil;
 import org.bukkit.Bukkit;
@@ -72,9 +73,9 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 	public static ChatChannelInfo ccInfo;
 
 	@Deprecated
-	public static Set<MineverseChatPlayer> players = new HashSet<MineverseChatPlayer>();
+	public static Set<MineverseChatPlayer> players = ConcurrentHashMap.newKeySet();
 	@Deprecated
-	public static Set<MineverseChatPlayer> onlinePlayers = new HashSet<MineverseChatPlayer>();
+	public static Set<MineverseChatPlayer> onlinePlayers = ConcurrentHashMap.newKeySet();
 
 	// Vault
 	private static Permission permission = null;

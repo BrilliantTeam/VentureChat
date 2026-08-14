@@ -1,10 +1,10 @@
 package mineverse.Aust1n46.chat.api;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.entity.Player;
 
@@ -17,12 +17,12 @@ import mineverse.Aust1n46.chat.MineverseChat;
  * @author Aust1n46
  */
 public final class MineverseChatAPI {
-    private static HashMap<UUID, MineverseChatPlayer> playerMap = new HashMap<UUID, MineverseChatPlayer>();
-    private static HashMap<String, UUID> namesMap = new HashMap<String, UUID>();
-    private static HashMap<UUID, MineverseChatPlayer> onlinePlayerMap = new HashMap<UUID, MineverseChatPlayer>();
-    private static List<String> networkPlayerNames = new ArrayList<String>();
+    private static ConcurrentHashMap<UUID, MineverseChatPlayer> playerMap = new ConcurrentHashMap<UUID, MineverseChatPlayer>();
+    private static ConcurrentHashMap<String, UUID> namesMap = new ConcurrentHashMap<String, UUID>();
+    private static ConcurrentHashMap<UUID, MineverseChatPlayer> onlinePlayerMap = new ConcurrentHashMap<UUID, MineverseChatPlayer>();
+    private static List<String> networkPlayerNames = new CopyOnWriteArrayList<String>();
 
-    private static HashMap<UUID, SynchronizedMineverseChatPlayer> proxyPlayerMap = new HashMap<UUID, SynchronizedMineverseChatPlayer>();
+    private static ConcurrentHashMap<UUID, SynchronizedMineverseChatPlayer> proxyPlayerMap = new ConcurrentHashMap<UUID, SynchronizedMineverseChatPlayer>();
 
     public static List<String> getNetworkPlayerNames() {
         return networkPlayerNames;
@@ -130,7 +130,8 @@ public final class MineverseChatAPI {
      * @return {@link MineverseChatPlayer}
      */
     public static MineverseChatPlayer getMineverseChatPlayer(String name) {
-        return getMineverseChatPlayer(namesMap.get(name));
+        UUID uuid = namesMap.get(name);
+        return uuid == null ? null : getMineverseChatPlayer(uuid);
     }
 
     /**
@@ -163,7 +164,8 @@ public final class MineverseChatAPI {
      * @return {@link MineverseChatPlayer}
      */
     public static MineverseChatPlayer getOnlineMineverseChatPlayer(String name) {
-        return getOnlineMineverseChatPlayer(namesMap.get(name));
+        UUID uuid = namesMap.get(name);
+        return uuid == null ? null : getOnlineMineverseChatPlayer(uuid);
     }
 
     /**

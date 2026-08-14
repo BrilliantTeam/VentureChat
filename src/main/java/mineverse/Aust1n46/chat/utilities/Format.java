@@ -509,6 +509,7 @@ public class Format {
 	}
 
 	public static void sendPacketPlayOutChat(Player player, PacketContainer packet) {
+		if (player == null) return;
 		ScheduleUtil.runEntityTask(getInstance(), player, () -> {
 			try {
 				ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);

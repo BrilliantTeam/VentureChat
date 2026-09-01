@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -187,5 +188,78 @@ public class FormatTest {
 
 		String result = Format.FormatStringLegacyColor(input);
 		assertEquals(expectedResult, result);
+	}
+
+	@Test
+	public void testFormatString_MarkdownBold() {
+		String input = "say **hello** there";
+		String expectedResult = "say " + BUKKIT_COLOR_CODE_PREFIX + "lhello" + BUKKIT_COLOR_CODE_PREFIX + "r there";
+
+		String result = Format.FormatString(input);
+		assertEquals(expectedResult, result);
+	}
+
+	@Test
+	public void testFormatString_MarkdownItalic() {
+		String expectedResult = BUKKIT_COLOR_CODE_PREFIX + "ohello" + BUKKIT_COLOR_CODE_PREFIX + "r";
+
+		assertEquals(expectedResult, Format.FormatString("*hello*"));
+		assertEquals(expectedResult, Format.FormatString("_hello_"));
+	}
+
+	@Test
+	public void testFormatString_MarkdownUnderlineStrikethroughObfuscated() {
+		assertEquals(BUKKIT_COLOR_CODE_PREFIX + "nhello" + BUKKIT_COLOR_CODE_PREFIX + "r", Format.FormatString("__hello__"));
+		assertEquals(BUKKIT_COLOR_CODE_PREFIX + "mhello" + BUKKIT_COLOR_CODE_PREFIX + "r", Format.FormatString("~~hello~~"));
+		assertEquals(BUKKIT_COLOR_CODE_PREFIX + "khello" + BUKKIT_COLOR_CODE_PREFIX + "r", Format.FormatString("||hello||"));
+	}
+
+	@Test
+	public void testFormatString_MarkdownNested() {
+		String input = "**a _b_**";
+		String expectedResult = BUKKIT_COLOR_CODE_PREFIX + "la " + BUKKIT_COLOR_CODE_PREFIX + "ob" + BUKKIT_COLOR_CODE_PREFIX + "r" + BUKKIT_COLOR_CODE_PREFIX + "l" + BUKKIT_COLOR_CODE_PREFIX + "r";
+
+		String result = Format.FormatString(input);
+		assertEquals(expectedResult, result);
+	}
+
+	@Test
+	public void testFormatString_MarkdownRestoresColorAndFormatCodes() {
+		String input = BUKKIT_COLOR_CODE_PREFIX + "a" + BUKKIT_COLOR_CODE_PREFIX + "ohi **there** you";
+		String expectedResult = BUKKIT_COLOR_CODE_PREFIX + "a" + BUKKIT_COLOR_CODE_PREFIX + "ohi " + BUKKIT_COLOR_CODE_PREFIX + "lthere" + BUKKIT_COLOR_CODE_PREFIX + "a" + BUKKIT_COLOR_CODE_PREFIX
+				+ "o you";
+
+		String result = Format.FormatString(input);
+		assertEquals(expectedResult, result);
+	}
+
+	@Test
+	public void testFormatString_MarkdownWithoutClosingDelimiter() {
+		String input = "5 * 3, Player_One says hi";
+
+		String result = Format.FormatString(input);
+		assertEquals(input, result);
+	}
+
+	@Test
+	public void testFormatStringAll_LeavesMarkdownAlone() {
+		String input = "&a[**Admin**] _Steve_";
+		String expectedResult = BUKKIT_COLOR_CODE_PREFIX + "a[**Admin**] _Steve_";
+
+		String result = Format.FormatStringAll(input);
+		assertEquals(expectedResult, result);
+	}
+
+	@Test
+	public void testConvertToJsonColors_ObfuscatedTextGetsSpoilerHover() {
+		try (MockedStatic<Bukkit> mockedBukkit = Mockito.mockStatic(Bukkit.class)) {
+			mockedBukkit.when(Bukkit::getVersion).thenReturn("git-Paper-450 (MC: 1.20.4)");
+			String input = BUKKIT_COLOR_CODE_PREFIX + "khidden";
+			String expectedResult = "{\"text\":\"hidden\",\"color\":\"white\",\"obfuscated\":true,"
+					+ "\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"hidden\"}}}";
+
+			String result = Format.convertToJsonColors(input);
+			assertEquals(expectedResult, result);
+		}
 	}
 }

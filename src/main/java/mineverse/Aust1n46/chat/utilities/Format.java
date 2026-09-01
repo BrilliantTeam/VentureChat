@@ -4,7 +4,9 @@ import static mineverse.Aust1n46.chat.MineverseChat.getInstance;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,6 +50,16 @@ public class Format {
 			"(?<!(&x(&[a-fA-F0-9]){5}))(?<!(&x(&[a-fA-F0-9]){4}))(?<!(&x(&[a-fA-F0-9]){3}))(?<!(&x(&[a-fA-F0-9]){2}))(?<!(&x(&[a-fA-F0-9]){1}))(?<!(&x))(&)([0-9a-fA-F])");
 	
 	private static final Pattern PLACEHOLDERAPI_PLACEHOLDER_PATTERN = Pattern.compile("\\{([^\\{\\}]+)\\}");
+
+	private static final Map<String, String> MARKDOWN_FORMAT_CODES = new LinkedHashMap<String, String>();
+	static {
+		MARKDOWN_FORMAT_CODES.put("**", BUKKIT_COLOR_CODE_PREFIX + "l");
+		MARKDOWN_FORMAT_CODES.put("__", BUKKIT_COLOR_CODE_PREFIX + "n");
+		MARKDOWN_FORMAT_CODES.put("~~", BUKKIT_COLOR_CODE_PREFIX + "m");
+		MARKDOWN_FORMAT_CODES.put("||", BUKKIT_COLOR_CODE_PREFIX + "k");
+		MARKDOWN_FORMAT_CODES.put("*", BUKKIT_COLOR_CODE_PREFIX + "o");
+		MARKDOWN_FORMAT_CODES.put("_", BUKKIT_COLOR_CODE_PREFIX + "o");
+	}
 	
 	public static final long MILLISECONDS_PER_DAY = 86400000;
 	public static final long MILLISECONDS_PER_HOUR = 3600000;
@@ -375,8 +387,12 @@ public class Format {
 			if (indexNextColor == -1) {
 				indexNextColor = remaining.length();
 			}
-			temp += "{\"text\":\"" + remaining.substring(0, indexNextColor) + "\",\"color\":\""
-					+ hexidecimalToJsonColorRGB(color) + "\"" + modifier + extensions + "},";
+			String text = remaining.substring(0, indexNextColor);
+			if (obfuscated && text.length() > 0 && !extensions.contains("hoverEvent")) {
+				modifier += ",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"" + text + "\"}}";
+			}
+			temp += "{\"text\":\"" + text + "\",\"color\":\"" + hexidecimalToJsonColorRGB(color) + "\""
+					+ modifier + extensions + "},";
 			remaining = remaining.substring(indexNextColor);
 		} while (remaining.length() > 1 && indexColor != -1);
 		if (temp.length() > 1)
@@ -698,12 +714,12 @@ public class Format {
 	}
 
 	/**
-     * Formats a string with Spigot formatting codes.
+     * Formats a string with Spigot formatting codes only.
      *
      * @param string to format.
      * @return {@link String}
      */
-	public static String FormatString(String string) {
+	private static String FormatStringCodes(String string) {
 		String allFormated = string;
 		allFormated = allFormated.replaceAll("&[kK]", BUKKIT_COLOR_CODE_PREFIX + "k");
 		allFormated = allFormated.replaceAll("&[lL]", BUKKIT_COLOR_CODE_PREFIX + "l");
@@ -716,6 +732,73 @@ public class Format {
 		return allFormated;
 	}
 
+	public static String FormatString(String string) {
+		return FormatStringMarkdown(FormatStringCodes(string));
+	}
+
+	public static String FormatStringMarkdown(String string) {
+		StringBuilder formatted = new StringBuilder(string.length());
+		List<String> open = new ArrayList<String>();
+		StringBuilder codes = new StringBuilder();
+		String color = "";
+		int index = 0;
+		while (index < string.length()) {
+			if (string.charAt(index) == BUKKIT_COLOR_CODE_PREFIX_CHAR && index + 1 < string.length()) {
+				char code = Character.toLowerCase(string.charAt(index + 1));
+				int length = code == 'x' ? HEX_COLOR_CODE_LENGTH : LEGACY_COLOR_CODE_LENGTH;
+				if ("0123456789abcdefrx".indexOf(code) >= 0 && index + length <= string.length()) {
+					color = code == 'r' ? "" : string.substring(index, index + length);
+					codes.setLength(0);
+					formatted.append(string, index, index + length);
+					for (String openDelimiter : open) {
+						formatted.append(MARKDOWN_FORMAT_CODES.get(openDelimiter));
+					}
+					index += length;
+					continue;
+				}
+				if ("klmno".indexOf(code) >= 0) {
+					codes.append(string, index, index + length);
+					formatted.append(string, index, index + length);
+					index += length;
+					continue;
+				}
+			}
+			String delimiter = markdownDelimiterAt(string, index, open);
+			boolean closing = delimiter != null && open.contains(delimiter);
+			if (delimiter == null || (!closing
+					&& string.indexOf(delimiter, index + delimiter.length()) <= index + delimiter.length())) {
+				formatted.append(string.charAt(index));
+				index++;
+				continue;
+			}
+			if (closing) {
+				while (!open.remove(open.size() - 1).equals(delimiter)) {
+				}
+				formatted.append(color.isEmpty() ? BUKKIT_COLOR_CODE_PREFIX + "r" : color).append(codes);
+				for (String openDelimiter : open) {
+					formatted.append(MARKDOWN_FORMAT_CODES.get(openDelimiter));
+				}
+			} else {
+				open.add(delimiter);
+				formatted.append(MARKDOWN_FORMAT_CODES.get(delimiter));
+			}
+			index += delimiter.length();
+		}
+		return formatted.toString();
+	}
+
+	private static String markdownDelimiterAt(String string, int index, List<String> open) {
+		if (!open.isEmpty() && string.startsWith(open.get(open.size() - 1), index)) {
+			return open.get(open.size() - 1);
+		}
+		for (String delimiter : MARKDOWN_FORMAT_CODES.keySet()) {
+			if (string.startsWith(delimiter, index)) {
+				return delimiter;
+			}
+		}
+		return null;
+	}
+
 	/**
      * Formats a string with Spigot legacy colors codes, Spigot and VentureChat hex
      * color codes, and Spigot formatting codes.
@@ -724,7 +807,7 @@ public class Format {
      * @return {@link String}
      */
 	public static String FormatStringAll(String string) {
-		String allFormated = Format.FormatString(string);
+		String allFormated = Format.FormatStringCodes(string);
 		allFormated = Format.FormatStringColor(allFormated);
 		return allFormated;
 	}

@@ -714,12 +714,12 @@ public class Format {
 	}
 
 	/**
-     * Formats a string with Spigot formatting codes only.
+     * Formats a string with Spigot formatting codes.
      *
      * @param string to format.
      * @return {@link String}
      */
-	private static String FormatStringCodes(String string) {
+	public static String FormatString(String string) {
 		String allFormated = string;
 		allFormated = allFormated.replaceAll("&[kK]", BUKKIT_COLOR_CODE_PREFIX + "k");
 		allFormated = allFormated.replaceAll("&[lL]", BUKKIT_COLOR_CODE_PREFIX + "l");
@@ -730,10 +730,6 @@ public class Format {
 
 		allFormated = allFormated.replaceAll("%", "\\%");
 		return allFormated;
-	}
-
-	public static String FormatString(String string) {
-		return FormatStringMarkdown(FormatStringCodes(string));
 	}
 
 	public static String FormatStringMarkdown(String string) {
@@ -807,7 +803,7 @@ public class Format {
      * @return {@link String}
      */
 	public static String FormatStringAll(String string) {
-		String allFormated = Format.FormatStringCodes(string);
+		String allFormated = Format.FormatString(string);
 		allFormated = Format.FormatStringColor(allFormated);
 		return allFormated;
 	}

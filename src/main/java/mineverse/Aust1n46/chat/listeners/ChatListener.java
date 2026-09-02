@@ -477,6 +477,9 @@ public class ChatListener implements Listener {
 		if(mcp.getPlayer().hasPermission("venturechat.color")) {
 			chat = Format.FormatStringColor(chat);
 		}
+		if(mcp.getPlayer().hasPermission("venturechat.format")) {
+			chat = Format.FormatString(chat);
+		}
 		if(!mcp.isQuickChat()) {
 			chat = " " + chat;
 		}
@@ -487,8 +490,8 @@ public class ChatListener implements Listener {
 		else {
 			chat = curColor + chat;
 		}
-		if(mcp.getPlayer().hasPermission("venturechat.format")) {
-			chat = Format.FormatString(chat);
+		if(mcp.getPlayer().hasPermission("venturechat.markdown")) {
+			chat = Format.FormatStringMarkdown(chat);
 		}
 		
 		String globalJSON = Format.convertToJson(mcp, format, chat); 

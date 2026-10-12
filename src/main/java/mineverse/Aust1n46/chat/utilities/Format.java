@@ -190,7 +190,26 @@ public class Format {
 					"([a-zA-Z0-9" + BUKKIT_COLOR_CODE_PREFIX + "\\-:/]+\\.[a-zA-Z/0-9" + BUKKIT_COLOR_CODE_PREFIX
 							+ "\\-:_#]+(\\.[a-zA-Z/0-9." + BUKKIT_COLOR_CODE_PREFIX + "\\-:;,#\\?\\+=_]+)?)");
 			Matcher matcher = pattern.matcher(remaining);
-			if (matcher.find()) {
+			Matcher discordMatcher = discordSyntax() != null ? discordSyntax().matcher(remaining) : null;
+			if (discordMatcher != null && discordMatcher.find() && (!matcher.find() || discordMatcher.start() <= matcher.start())) {
+				String before = remaining.substring(0, discordMatcher.start());
+				temp += convertToJsonColors(lastCode + before) + ",";
+				lastCode = getLastCode(lastCode + before);
+				String[] rendered = renderDiscordSyntax(discordMatcher.group().replace("\\\"", "\"").replace("\\\\", "\\"));
+				String label = escapeJsonChars(rendered[0]);
+				if (rendered[1] == null) {
+					temp += convertToJsonColors(lastCode + label) + ",";
+				} else {
+					String url = escapeJsonChars(rendered[1]);
+					temp += convertToJsonColors(lastCode + label,
+							",\"underlined\":" + underlineURLs()
+									+ ",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + url
+									+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
+									+ convertToJsonColors(lastCode + url) + "]}}")
+							+ ",";
+				}
+				remaining = remaining.substring(discordMatcher.end());
+			} else if (matcher.find(0)) {
 				indexLink = matcher.start();
 				indexLinkEnd = matcher.end();
 				link = remaining.substring(indexLink, indexLinkEnd);
@@ -214,6 +233,32 @@ public class Format {
 			}
 		} while (true);
 		return temp;
+	}
+
+	private static Pattern discordSyntaxPattern;
+	private static java.lang.reflect.Method discordSyntaxRenderer;
+
+	private static Pattern discordSyntax() {
+		if (discordSyntaxPattern == null) {
+			org.bukkit.plugin.Plugin discordSRV = Bukkit.getPluginManager().getPlugin("DiscordSRV");
+			if (discordSRV == null || !discordSRV.isEnabled()) return null;
+			try {
+				Class<?> util = discordSRV.getClass().getClassLoader().loadClass("github.scarsz.discordsrv.util.DiscordFormatUtil");
+				discordSyntaxRenderer = util.getMethod("renderSyntax", String.class);
+				discordSyntaxPattern = (Pattern) util.getField("MINECRAFT_CHAT_SYNTAX").get(null);
+			} catch (ReflectiveOperationException | LinkageError e) {
+				return null;
+			}
+		}
+		return discordSyntaxPattern;
+	}
+
+	private static String[] renderDiscordSyntax(String syntax) {
+		try {
+			return (String[]) discordSyntaxRenderer.invoke(null, syntax);
+		} catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+			return new String[] {syntax, null};
+		}
 	}
 
 	public static String getLastCode(String s) {

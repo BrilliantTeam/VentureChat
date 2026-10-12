@@ -99,7 +99,7 @@ public class Edit extends Command {
 
 	public WrappedChatComponent getMessageDeletedChatComponentPlayer() {
 		if (this.messageDeletedComponentPlayer == null) {
-			this.messageDeletedComponentPlayer = WrappedChatComponent.fromJson(
+			this.messageDeletedComponentPlayer = Format.jsonComponent(
 					"{\"text\":\"\",\"extra\":[{\"text\":\"<message removed>\",\"color\":\"red\",\"italic\":\"true\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\""
 							+ Format.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions")) + "\"}]}}}]}");
 		}
@@ -111,7 +111,7 @@ public class Edit extends Command {
 		if (message.getMessage().contains(Format.FormatStringAll(plugin.getConfig().getString("messageremovericon")))) {
 			oMessage = oMessage.substring(0, oMessage.length() - plugin.getConfig().getString("messageremovericon").length() - 4) + "\"}]";
 		}
-		return WrappedChatComponent.fromJson(
+		return Format.jsonComponent(
 				Format.FormatStringAll("{\"text\":\"\",\"extra\":[{\"text\":\"&c&o<message removed>\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"&7Message: \","
 						+ oMessage + "}}}]}"));
 	}

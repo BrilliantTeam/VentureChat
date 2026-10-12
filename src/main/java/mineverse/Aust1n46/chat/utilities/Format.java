@@ -23,6 +23,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.ClickAction;
@@ -479,18 +480,26 @@ public class Format {
 		return json;
 	}
 
+	public static WrappedChatComponent jsonComponent(String json) {
+		try {
+			json = GsonComponentSerializer.gson().serialize(GsonComponentSerializer.gson().deserialize(json));
+		} catch (RuntimeException | LinkageError ignored) {
+		}
+		return WrappedChatComponent.fromJson(json);
+	}
+
 	public static PacketContainer createPacketPlayOutChat(String json) {
 		final PacketContainer container;
 		if (VersionHandler.isAtLeast_1_20_4()) { // 1.20.4+
 			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
-			container.getChatComponents().write(0, WrappedChatComponent.fromJson(json));
+			container.getChatComponents().write(0, jsonComponent(json));
 			container.getBooleans().write(0, false);
 		} else if (VersionHandler.isAbove_1_19()) { // 1.19.1 -> 1.20.3
 			container = new PacketContainer(PacketType.Play.Server.SYSTEM_CHAT);
 			container.getStrings().write(0, json);
 			container.getBooleans().write(0, false);
 		} else if (VersionHandler.isUnder_1_19()) { // 1.7 -> 1.19
-			WrappedChatComponent component = WrappedChatComponent.fromJson(json);
+			WrappedChatComponent component = jsonComponent(json);
 			container = new PacketContainer(PacketType.Play.Server.CHAT);
 			container.getModifier().writeDefaults();
 			container.getChatComponents().write(0, component);

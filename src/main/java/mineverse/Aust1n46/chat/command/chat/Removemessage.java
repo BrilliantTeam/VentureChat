@@ -27,7 +27,7 @@ import mineverse.Aust1n46.chat.utilities.ScheduleUtil;
 public class Removemessage extends Command {
 	private MineverseChat plugin = MineverseChat.getInstance();
 	private PacketContainer emptyLinePacketContainer = Format.createPacketPlayOutChat("{\"extra\":[\" \"],\"text\":\"\"}");
-	private WrappedChatComponent messageDeletedComponentPlayer = WrappedChatComponent.fromJson(
+	private WrappedChatComponent messageDeletedComponentPlayer = Format.jsonComponent(
 			"{\"text\":\"\",\"extra\":[{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("messageremovertext")))
 					+ "],\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
 					+ Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("messageremoverpermissions"))) + "]}}}]}");
@@ -124,7 +124,7 @@ public class Removemessage extends Command {
 	}
 
 	public WrappedChatComponent getMessageDeletedChatComponentAdmin(ChatMessage message) {
-		return WrappedChatComponent.fromJson(
+		return Format.jsonComponent(
 				"[{\"text\":\"\",\"extra\":[{\"text\":\"\",\"extra\":[" + Format.convertToJsonColors(Format.FormatStringAll(plugin.getConfig().getString("messageremovertext")))
 						+ "],\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\"," + message.getColoredMessage() + "}}}]}]");
 	}

@@ -530,7 +530,7 @@ public class Format {
 			json = GsonComponentSerializer.gson().serialize(GsonComponentSerializer.gson().deserialize(json));
 		} catch (RuntimeException | LinkageError ignored) {
 		}
-		return WrappedChatComponent.fromJson(json);
+		return WrappedChatComponent.fromJson(EmojiSprites.apply(json));
 	}
 
 	public static PacketContainer createPacketPlayOutChat(String json) {

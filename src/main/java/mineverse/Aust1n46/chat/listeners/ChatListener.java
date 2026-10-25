@@ -28,6 +28,7 @@ import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import mineverse.Aust1n46.chat.api.events.ChannelJoinEvent;
 import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
+import mineverse.Aust1n46.chat.command.chat.Chatreply;
 import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.database.Database;
 import mineverse.Aust1n46.chat.localization.LocalizedMessage;
@@ -48,15 +49,20 @@ public class ChatListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
 		event.setCancelled(true);
+		String[] reply = Chatreply.take(event.getPlayer());
 		ScheduleUtil.runTaskAsynchronously(plugin, new Runnable() {
 			@Override
 			public void run() {
-				handleTrueAsyncPlayerChatEvent(event);
+				handleTrueAsyncPlayerChatEvent(event, reply);
 			}
 		});
 	}
 	
 	public void handleTrueAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
+		handleTrueAsyncPlayerChatEvent(event, null);
+	}
+
+	public void handleTrueAsyncPlayerChatEvent(AsyncPlayerChatEvent event, String[] reply) {
 		boolean bungee = false;
 		String chat = event.getMessage();
 		String format;
@@ -494,10 +500,12 @@ public class ChatListener implements Listener {
 			chat = Format.FormatStringMarkdown(chat);
 		}
 		
-		String globalJSON = Format.convertToJson(mcp, format, chat); 
-		format = Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(format)));
+		String quote = reply == null ? "" : Chatreply.quote(mcp.getPlayer(), reply);
+		String rawFormat = format;
+		format = quote + Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(mcp.getPlayer(), Format.FormatStringAll(format)));
 		String message = Format.stripColor(format + chat); // UTF-8 encoding issues.
 		int hash = message.hashCode();
+		String globalJSON = Format.convertToJson(mcp, rawFormat, chat, quote, hash);
 		
 		//Create VentureChatEvent
 		VentureChatEvent ventureChatEvent = new VentureChatEvent(mcp, mcp.getName(), mcp.getNickname(), MineverseChat.getVaultPermission().getPrimaryGroup(mcp.getPlayer()), eventChannel, recipients, recipientCount, format, chat, globalJSON, hash, bungee);
@@ -535,6 +543,7 @@ public class ChatListener implements Listener {
 					mcp.getPlayer().sendMessage(Format.FormatStringAll(plugin.getConfig().getString("emptychannelalert", "&6No one is listening to you.")));	
 				}
 			}
+			Chatreply.remember(hash, Chatreply.sender(mcp.getPlayer()), chat);
 			for(Player p : recipients) {
 				String json = Format.formatModerationGUI(globalJSON, p, mcp.getName(), channel.getName(), hash);
 				PacketContainer packet = Format.createPacketPlayOutChat(json);
@@ -564,6 +573,7 @@ public class ChatListener implements Listener {
 				}
 				out.writeUTF(MineverseChat.getVaultPermission().getPrimaryGroup(mcp.getPlayer()));
 				out.writeUTF(mcp.getNickname());
+				out.writeUTF(Chatreply.sender(mcp.getPlayer()));
 				mcp.getPlayer().sendPluginMessage(plugin, MineverseChat.PLUGIN_MESSAGING_CHANNEL, byteOutStream.toByteArray());
 				out.close();
 			}

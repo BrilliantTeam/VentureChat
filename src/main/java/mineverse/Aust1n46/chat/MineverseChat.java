@@ -35,6 +35,7 @@ import mineverse.Aust1n46.chat.api.events.VentureChatEvent;
 import mineverse.Aust1n46.chat.channel.ChatChannel;
 import mineverse.Aust1n46.chat.channel.ChatChannelInfo;
 import mineverse.Aust1n46.chat.command.VentureCommandExecutor;
+import mineverse.Aust1n46.chat.command.chat.Chatreply;
 import mineverse.Aust1n46.chat.command.chat.Channel;
 import mineverse.Aust1n46.chat.command.mute.MuteContainer;
 import mineverse.Aust1n46.chat.database.Database;
@@ -387,6 +388,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				String globalJSON = msgin.readUTF();
 				String primaryGroup = msgin.readUTF();
 				String nickname = msgin.readUTF();
+				String replySender = msgin.available() > 0 ? msgin.readUTF() : "";
 				
 				if(!ChatChannel.isChannel(chatchannel)) {
 					return;
@@ -416,6 +418,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 				});
 				
 				Bukkit.getConsoleSender().sendMessage(consoleChat);
+				Chatreply.remember(hash, replySender, chat);
 				
 				if(Database.isEnabled()) {
 					Database.writeVentureChat(senderUUID.toString(), senderName, server, chatchannel, chat.replace("'", "''"), "Chat");

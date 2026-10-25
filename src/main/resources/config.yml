@@ -208,6 +208,22 @@ guiicon: '&c [✓]'
 guitext: '&cOpen Moderation GUI'
 guirows: 1
 
+# Click a chat message to reply to it
+# {reply_sender} : sender text of the replied message
+# {reply_message} : replied message, shortened to max-length characters
+reply:
+  enabled: true
+  hover: '&7點此回覆這則訊息。'
+  expired: '&c此訊息已無法回覆。'
+  sender: '{player_displayname}&7：'
+  format: '&8┌── {reply_sender}&8| &7{reply_message}'
+  max-length: 30
+  dialog:
+    title: '&f回覆訊息'
+    label: '&7訊息內容'
+    send: '&a送出'
+    cancel: '&c取消'
+
 # All clickable URL's will be underlined if set to true
 underlineurls: true
 

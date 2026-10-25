@@ -80,12 +80,20 @@ public class Format {
      * @return {@link String}
      */
 	public static String convertToJson(MineverseChatPlayer sender, String format, String chat) {
+		return convertToJson(sender, format, chat, "", 0);
+	}
+
+	public static String convertToJson(MineverseChatPlayer sender, String format, String chat, String quote, int hash) {
 		JsonFormat JSONformat = JsonFormat.getJsonFormat(sender.getJsonFormat());
 		String c = escapeJsonChars(chat);
-		String json = "[\"\",{\"text\":\"\",\"extra\":[";
+		String json = "[\"\",";
+		if (!quote.isEmpty()) {
+			json += convertToJsonColors(escapeJsonChars(DEFAULT_COLOR_CODE + quote)) + ",";
+		}
+		json += "{\"text\":\"\",\"extra\":[";
 		json += convertPlaceholders(format, JSONformat, sender);
 		json += "]}";
-		json += "," + convertLinks(c);
+		json += "," + replyClick(convertLinks(c), hash);
 		json += "]";
 		if (getInstance().getConfig().getString("loglevel", "info").equals("debug")) {
 			System.out.println(json);
@@ -96,6 +104,16 @@ public class Format {
 			System.out.println("END OF JSON");
 		}
 		return json;
+	}
+
+	private static String replyClick(String json, int hash) {
+		if (!getInstance().getConfig().getBoolean("reply.enabled", false)) {
+			return json;
+		}
+		String hover = escapeJsonChars(FormatStringAll(getInstance().getConfig().getString("reply.hover", "&7點此回覆這則訊息。")));
+		return "{\"text\":\"\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/chatreply " + hash
+				+ "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + convertToJsonColors(hover)
+				+ "]}},\"extra\":[" + json + "]}";
 	}
 
 	/**

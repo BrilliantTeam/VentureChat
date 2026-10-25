@@ -105,6 +105,9 @@ commands:
     venturechatgui:
         aliases: [vchatgui]
         enabled: true
+    chatreply:
+        aliases: [vchatreply]
+        enabled: true
     messagetoggle:
         aliases: [mtoggle,vmessagetoggle]
         enabled: true

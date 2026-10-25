@@ -22,6 +22,7 @@ import mineverse.Aust1n46.chat.command.chat.BungeeToggle;
 import mineverse.Aust1n46.chat.command.chat.Channel;
 import mineverse.Aust1n46.chat.command.chat.Channelinfo;
 import mineverse.Aust1n46.chat.command.chat.Chatinfo;
+import mineverse.Aust1n46.chat.command.chat.Chatreply;
 import mineverse.Aust1n46.chat.command.chat.Chatreload;
 import mineverse.Aust1n46.chat.command.chat.Chlist;
 import mineverse.Aust1n46.chat.command.chat.Chwho;
@@ -105,6 +106,7 @@ public class VentureCommandExecutor {
 		commands.put("channelinfo", new Channelinfo());
 		commands.put("chatinfo", new Chatinfo());
 		commands.put("chatreload", new Chatreload());
+		commands.put("chatreply", new Chatreply());
 		commands.put("chlist", new Chlist());
 		commands.put("chwho", new Chwho());
 		commands.put("clearchat", new Clearchat());

@@ -36,6 +36,7 @@ public class VentureChatProxy {
 				String json = in.readUTF();
 				String primaryGroup = in.readUTF();
 				String nickname = in.readUTF();
+				String replySender = in.available() > 0 ? in.readUTF() : "";
 				out.writeUTF("Chat");
 				out.writeUTF(serverName);
 				out.writeUTF(chatchannel);
@@ -47,6 +48,7 @@ public class VentureChatProxy {
 				out.writeUTF(json);
 				out.writeUTF(primaryGroup);
 				out.writeUTF(nickname);
+				out.writeUTF(replySender);
 				for(VentureChatProxyServer send : source.getServers()) {
 					if(!send.isEmpty()) {
 						if(!bungeeToggle && !send.getName().equalsIgnoreCase(serverName)) {

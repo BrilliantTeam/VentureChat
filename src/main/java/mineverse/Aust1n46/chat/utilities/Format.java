@@ -172,13 +172,13 @@ public class Format {
 							hoverJson = ",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":["
 									+ convertToJsonColors(hoverText) + "]}}";
 						}
-						temp += convertToJsonColors(lastCode + formattedPlaceholder, actionJson + hoverJson) + ",";
+						temp += convertPlaceholderText(lastCode, formattedPlaceholder, actionJson + hoverJson) + ",";
 						placeholderHasJsonAttribute = true;
 						break;
 					}
 				}
 				if (!placeholderHasJsonAttribute) {
-					temp += convertToJsonColors(lastCode + formattedPlaceholder) + ",";
+					temp += convertPlaceholderText(lastCode, formattedPlaceholder, "") + ",";
 				}
 				lastCode = getLastCode(lastCode + formattedPlaceholder);
 				remaining = remaining.substring(indexEnd);
@@ -188,6 +188,12 @@ public class Format {
 			}
 		} while (true);
 		return temp;
+	}
+
+	private static String convertPlaceholderText(String lastCode, String text, String extensions) {
+		TitleSprites.Title title = TitleSprites.find(text);
+		return title == null ? convertToJsonColors(lastCode + text, extensions)
+				: title.json(extensions) + convertToJsonColors(title.suffix(), extensions);
 	}
 
 	/**

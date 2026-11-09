@@ -1022,7 +1022,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						sendPluginMessage(stream);
 						return;
 					}
-					p.getPlayer().sendMessage(Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
+					Format.sendLegacy(p.getPlayer(), Format.FormatStringAll(PlaceholderAPI.setBracketPlaceholders(p.getPlayer(), send.replaceAll("receiver_", ""))) + msg);
 					if(p.hasNotifications()) {
 						Format.playMessageSound(p);
 					}
@@ -1078,7 +1078,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 						MineverseChatAPI.addNameToMap(receiverMCP);
 					}
 					senderMCP.setReplyPlayer(receiverUUID);
-					senderMCP.getPlayer().sendMessage(echo);
+					Format.sendLegacy(senderMCP.getPlayer(), echo);
 				}
 				if(identifier.equals("Spy")) {
 					String receiverName = msgin.readUTF();
@@ -1087,7 +1087,7 @@ public class MineverseChat extends JavaPlugin implements PluginMessageListener {
 					if(!spy.startsWith("VentureChat:NoSpy")) {
 						for(MineverseChatPlayer pl : MineverseChatAPI.getOnlineMineverseChatPlayers()) {
 							if(pl.isSpy() && !pl.getName().equals(senderName) && !pl.getName().equals(receiverName)) {
-								pl.getPlayer().sendMessage(spy);
+								Format.sendLegacy(pl.getPlayer(), spy);
 							}
 						}
 					}

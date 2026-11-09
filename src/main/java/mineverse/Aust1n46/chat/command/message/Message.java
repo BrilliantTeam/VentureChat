@@ -94,8 +94,8 @@ public class Message extends Command {
 
 				player.setReplyPlayer(mcp.getUUID());
 				mcp.setReplyPlayer(player.getUUID());
-				player.getPlayer().sendMessage(send);
-				mcp.getPlayer().sendMessage(echo);
+				Format.sendLegacy(player.getPlayer(), send);
+				Format.sendLegacy(mcp.getPlayer(), echo);
 				if (player.hasNotifications()) {
 					Format.playMessageSound(player);
 				}
@@ -105,7 +105,7 @@ public class Message extends Command {
 							continue;
 						}
 						if (sp.isSpy() && sp.getPlayer() != null) {
-							sp.getPlayer().sendMessage(spy);
+							Format.sendLegacy(sp.getPlayer(), spy);
 						}
 					}
 				}

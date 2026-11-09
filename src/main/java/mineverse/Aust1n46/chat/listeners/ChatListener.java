@@ -145,12 +145,12 @@ public class ChatListener implements Listener {
 							continue;
 						}
 						if(p.isSpy()) {
-							p.getPlayer().sendMessage(spy);
+							Format.sendLegacy(p.getPlayer(), spy);
 						}
 					}
 				}
-				tp.getPlayer().sendMessage(send);
-				mcp.getPlayer().sendMessage(echo);
+				Format.sendLegacy(tp.getPlayer(), send);
+				Format.sendLegacy(mcp.getPlayer(), echo);
 				if(tp.hasNotifications()) {
 					Format.playMessageSound(tp);
 				}

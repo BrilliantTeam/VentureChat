@@ -88,12 +88,12 @@ public class Reply extends Command {
 								continue;
 							}
 							if (p.isSpy() && p.getPlayer() != null) {
-								p.getPlayer().sendMessage(spy);
+								Format.sendLegacy(p.getPlayer(), spy);
 							}
 						}
 					}
-					player.getPlayer().sendMessage(send);
-					mcp.getPlayer().sendMessage(echo);
+					Format.sendLegacy(player.getPlayer(), send);
+					Format.sendLegacy(mcp.getPlayer(), echo);
 					if (player.hasNotifications()) {
 						Format.playMessageSound(player);
 					}

@@ -24,6 +24,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import mineverse.Aust1n46.chat.ClickAction;
@@ -555,6 +556,12 @@ public class Format {
 		} catch (RuntimeException | LinkageError ignored) {
 		}
 		return WrappedChatComponent.fromJson(EmojiSprites.apply(json));
+	}
+
+	private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
+
+	public static void sendLegacy(Player player, String legacy) {
+		sendPacketPlayOutChat(player, createPacketPlayOutChat(GsonComponentSerializer.gson().serialize(LEGACY.deserialize(legacy))));
 	}
 
 	public static PacketContainer createPacketPlayOutChat(String json) {

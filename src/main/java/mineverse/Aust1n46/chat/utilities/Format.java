@@ -561,7 +561,7 @@ public class Format {
 	private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
 	public static void sendLegacy(Player player, String legacy) {
-		sendPacketPlayOutChat(player, createPacketPlayOutChat(GsonComponentSerializer.gson().serialize(LEGACY.deserialize(legacy))));
+		sendPacketPlayOutChat(player, createPacketPlayOutChat(GsonComponentSerializer.gson().serialize(LEGACY.deserialize(legacy.replace('\u0085', '\n')))));
 	}
 
 	public static PacketContainer createPacketPlayOutChat(String json) {
